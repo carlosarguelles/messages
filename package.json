@@ -1,0 +1,11 @@
+{
+  "name": "messages",
+  "version": "1.0.0",
+  "description": "A simple web application for creating chats and sending messages",
+  "scripts": {
+    "tw-watch": "tailwindcss -i ./main.css -o ./public/css/main.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.1"
+  }
+}
