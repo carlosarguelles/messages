@@ -24,6 +24,8 @@ func main() {
 
 	chatService := internal.NewChatService(client)
 
+	srv.Handle("/public/", http.StripPrefix("/public/", http.FileServer(http.Dir("./public"))))
+
 	srv.HandleFunc("/new", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == "GET" {
 			templates.CreateChat().Render(ctx, w)
