@@ -1,0 +1,25 @@
+package templates
+
+import "github.com/carlosarguelles/messages/internal"
+
+templ Chat(chat internal.Chat) {
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8"/>
+      <title>Chat</title>
+      <script src="https://cdn.tailwindcss.com"></script>
+      <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    </head>
+    <body class="h-screen antialiased">
+      <div class="w-full h-full flex flex-col justify-between">
+        <h1 class="text-xl text-center p-4 font-bold">{ chat.Name }</h1>
+        <form class="m-0" method="POST">
+          <div class="bg-gray-200 border border-gray-400 flex p-3 items-center gap-3">
+            <input type="text" name="message" class="flex-1 border bg-gray-100 py-1 px-2 border border-gray-400 rounded-lg" />
+            <button type="submit" class="bg-green-500 font-medium rounded-lg py-1 px-2 text-white border-green-700">Send</button>
+          </div>
+        </form>
+      </div>
+    </body>
+    </html>
+}
