@@ -1,0 +1,17 @@
+package internal
+
+templ MessageBubble(username string, content string, incoming bool) {
+	if incoming {
+		<div id="messages" hx-swap-oob="beforeend">
+			<div class="flex gap-2">
+				<span class="font-bold">{ username }</span>
+				<div>{ content }</div>
+			</div>
+		</div>
+	} else {
+		<div class="flex gap-2">
+			<span class="font-bold">{ username }</span>
+			<div>{ content }</div>
+		</div>
+	}
+}
