@@ -8,8 +8,11 @@ import (
 
 	"github.com/carlosarguelles/messages/internal"
 	"github.com/carlosarguelles/messages/templates"
+	"github.com/gorilla/websocket"
 	"github.com/redis/go-redis/v9"
 )
+
+var upgrader = websocket.Upgrader{}
 
 func main() {
 	srv := http.NewServeMux()
@@ -21,6 +24,10 @@ func main() {
 	})
 
 	defer client.Close()
+
+	pool := internal.NewPool()
+
+	go pool.Run()
 
 	chatService := internal.NewChatService(client)
 
@@ -59,14 +66,44 @@ func main() {
 			templates.Chat(*chat).Render(ctx, w)
 		}
 
-		if r.Method == "POST" {
-			err := r.ParseForm()
+		if r.Method == http.MethodPost {
+			r.ParseForm()
+			content := r.Form.Get("message")
+			username := r.Form.Get("username")
+			chatID := r.Form.Get("chatID")
+			message, err := chatService.NewMessage(r.Context(), chatID, username, content)
 			if err != nil {
-				log.Fatal("error reading body")
+				templates.MessageForm(chatID, username, false).Render(r.Context(), w)
+				return
 			}
-			message := r.Form.Get("message")
-			fmt.Printf("Message received: %s", message)
+			pool.Broadcast <- *message
+			templates.MessageForm(chatID, username, true).Render(r.Context(), w)
 		}
+
+		if r.Method == http.MethodPut {
+			r.ParseForm()
+			chatID := r.Form.Get("id")
+			username := r.Form.Get("username")
+			if username == "" || chatID == "" {
+				return
+			}
+			templates.MessageForm(chatID, username, true).Render(r.Context(), w)
+		}
+	})
+
+	srv.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+		r.ParseForm()
+		chatID := r.Form.Get("chatID")
+		if chatID == "" {
+			return
+		}
+		conn, err := upgrader.Upgrade(w, r, nil)
+		if err != nil {
+			return
+		}
+		client := internal.NewClient(pool, conn, chatID)
+		pool.Register <- client
+		go client.WritePump(r.Context())
 	})
 
 	http.ListenAndServe(":8080", srv)
