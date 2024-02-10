@@ -3,6 +3,7 @@ package internal
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
@@ -11,6 +12,12 @@ import (
 type Chat struct {
 	ID   string
 	Name string
+	TTL  time.Duration
+}
+
+func (c *Chat) ExpiresAt() string {
+	expiration := time.Now().Add(c.TTL)
+	return fmt.Sprintf("%s %d, %d:%d", expiration.Month().String(), expiration.Day(), expiration.Hour(), expiration.Minute())
 }
 
 type ChatService struct {
@@ -24,11 +31,12 @@ func NewChatService(client *redis.Client) *ChatService {
 func (s *ChatService) NewChat(ctx context.Context, name string) (*Chat, error) {
 	id := uuid.NewString()
 	key := fmt.Sprintf("chats:%s", id)
-	err := s.client.Set(ctx, key, name, 0).Err()
+	ttl := 24 * time.Hour
+	err := s.client.Set(ctx, key, name, ttl).Err()
 	if err != nil {
 		return nil, err
 	}
-	return &Chat{ID: id, Name: name}, err
+	return &Chat{ID: id, Name: name, TTL: ttl}, err
 }
 
 func (s *ChatService) GetChat(ctx context.Context, id string) (*Chat, error) {
@@ -37,5 +45,10 @@ func (s *ChatService) GetChat(ctx context.Context, id string) (*Chat, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Chat{ID: id, Name: name}, nil
+	ttl, err := s.client.TTL(ctx, key).Result()
+	if err != nil {
+		return nil, err
+	}
+	return &Chat{ID: id, Name: name, TTL: ttl}, nil
 }
+
