@@ -1,25 +1,25 @@
 package templates
 
 templ CreateChat() {
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8"/>
-      <title>Chat</title>
-      <script src="https://cdn.tailwindcss.com"></script>
-      <script src="https://unpkg.com/htmx.org@1.9.10"></script>
-    </head>
-    <body class="h-screen antialiased">
-      <div class="container mx-auto max-w-4xl">
-        <h1 class="text-xl text-center p-4 font-bold">Create Chat</h1>
-        <form class="m-0" method="POST">
-          <div class="flex items-center gap-3">
-            <label for="name">Chat Name</label>
-            <input id="name" type="text" name="name" class="flex-1 border bg-gray-100 py-1 px-2 border border-gray-400 rounded-lg" />
-            <button type="submit" class="bg-green-500 font-medium rounded-lg py-1 px-2 text-white border-green-700">Create Chat</button>
-          </div>
-        </form>
-      </div>
-    </body>
-    </html>
-
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<title>New Chat</title>
+			<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+			<script src="https://unpkg.com/htmx.org/dist/ext/ws.js"></script>
+			<link rel="stylesheet" href="/public/css/main.css"/>
+		</head>
+		<body class="h-screen antialiased">
+			<div class="container mx-auto max-w-4xl">
+				<h1 class="text-xl text-center p-4 font-bold">Create Chat</h1>
+				<form class="m-0" action="/new" method="post" hx-boost="true">
+					<div class="flex items-center gap-3">
+						<label for="name">Chat Name</label>
+						<input autocomplete="off" id="name" type="text" name="name" class="flex-1 bg-gray-100 py-1 px-2 border border-gray-400 rounded-lg ring-0 outline-0 focus:border-green-500"/>
+						<button type="submit" class="bg-green-500 font-medium rounded-lg py-1 px-2 text-white ring-0 outline-0 border border-transparent focus:border-green-700">Create Chat</button>
+					</div>
+				</form>
+			</div>
+		</body>
+	</html>
 }
