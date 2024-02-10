@@ -1,0 +1,12 @@
+package templates
+
+templ UsernameForm(chatID string) {
+	<form class="m-0" hx-put="/chat" hx-swap="outerHTML">
+		<div class="bg-gray-200 border border-gray-400 flex p-3 items-center gap-3">
+			<input type="hidden" name="id" value={ chatID }/>
+			<label for="username">Send Message As</label>
+			<input autocomplete="username" autofocus placeholder="Username" id="username" type="text" name="username" class="flex-1 bg-gray-100 py-1 px-2 border border-gray-400 rounded-lg ring-0 outline-0 focus:border-green-500"/>
+			<button type="submit" class="bg-green-500 font-medium rounded-lg py-1 px-2 text-white ring-0 outline-0 border border-transparent focus:border-green-700">Start Messaging</button>
+		</div>
+	</form>
+}

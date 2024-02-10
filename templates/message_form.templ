@@ -1,0 +1,17 @@
+package templates
+
+import "fmt"
+
+templ MessageForm(chatID string, username string, lastSendOk bool) {
+	<form class="m-0" hx-post="/chat" hx-swap="outerHTML">
+		<div class="bg-gray-200 border border-gray-400 flex p-3 items-center gap-3">
+			if !lastSendOk {
+				<span class="text-red-500">Message Not Delivered, Try Again</span>
+			}
+			<input type="hidden" name="chatID" value={ chatID }/>
+			<input type="hidden" name="username" value={ username }/>
+			<input autocomplete="off" autofocus placeholder={ fmt.Sprintf("Sending a message as %s", username) } type="text" name="message" class="flex-1 border bg-gray-100 py-1 px-2 border-gray-400 rounded-lg ring-0 outline-0 focus:border-green-500"/>
+			<button type="submit" class="bg-green-500 font-medium rounded-lg py-1 px-2 text-white ring-0 outline-0 border border-transparent focus:border-green-700">Send</button>
+		</div>
+	</form>
+}
