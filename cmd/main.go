@@ -1,9 +1,7 @@
 package main
 
 import (
-	"context"
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/carlosarguelles/messages/internal"
@@ -16,8 +14,6 @@ var upgrader = websocket.Upgrader{}
 
 func main() {
 	srv := http.NewServeMux()
-
-	ctx := context.Background()
 
 	client := redis.NewClient(&redis.Options{
 		Addr: "localhost:6379",
@@ -34,36 +30,39 @@ func main() {
 	srv.Handle("/public/", http.StripPrefix("/public/", http.FileServer(http.Dir("./public"))))
 
 	srv.HandleFunc("/new", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == "GET" {
-			templates.CreateChat().Render(ctx, w)
+		if r.Method == http.MethodGet {
+			templates.CreateChat().Render(r.Context(), w)
 		}
 
-		if r.Method == "POST" {
-			err := r.ParseForm()
-			if err != nil {
-				log.Fatal("error reading body")
-			}
+		if r.Method == http.MethodPost {
+			r.ParseForm()
 			name := r.Form.Get("name")
-			chat, err := chatService.NewChat(ctx, name)
+			if name == "" {
+				return
+			}
+			chat, err := chatService.NewChat(r.Context(), name)
 			if err != nil {
-				log.Fatal("error creating chat")
+				return
 			}
 			http.Redirect(w, r, fmt.Sprintf("/chat?id=%s", chat.ID), http.StatusSeeOther)
 		}
 	})
 
 	srv.HandleFunc("/chat", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == "GET" {
-			err := r.ParseForm()
-			if err != nil {
-				log.Fatal("error reading body")
-			}
+		if r.Method == http.MethodGet {
+			r.ParseForm()
 			chatID := r.Form.Get("id")
-			chat, err := chatService.GetChat(ctx, chatID)
+			chat, err := chatService.GetChat(r.Context(), chatID)
 			if err != nil {
-				log.Fatal("error retrieving chat")
+				http.Redirect(w, r, "/new", http.StatusSeeOther)
+				return
 			}
-			templates.Chat(*chat).Render(ctx, w)
+			username := r.Form.Get("username")
+			messages, err := chatService.GetChatMessages(r.Context(), chatID)
+			if err != nil {
+				return
+			}
+			templates.Chat(*chat, username, messages).Render(r.Context(), w)
 		}
 
 		if r.Method == http.MethodPost {
