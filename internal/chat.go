@@ -102,6 +102,9 @@ func (s *ChatService) GetChatMessages(ctx context.Context, chatID string) ([]Mes
 			break
 		}
 	}
+	if len(keys) == 0 {
+		return nil, nil
+	}
 	results, err := s.client.MGet(ctx, keys...).Result()
 	if err != nil {
 		return nil, err
