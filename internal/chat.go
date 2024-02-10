@@ -24,13 +24,17 @@ type ChatService struct {
 	client *redis.Client
 }
 
+const (
+	ChatKey    = "chats:%s"
+)
+
 func NewChatService(client *redis.Client) *ChatService {
 	return &ChatService{client}
 }
 
 func (s *ChatService) NewChat(ctx context.Context, name string) (*Chat, error) {
 	id := uuid.NewString()
-	key := fmt.Sprintf("chats:%s", id)
+	key := fmt.Sprintf(ChatKey, id)
 	ttl := 24 * time.Hour
 	err := s.client.Set(ctx, key, name, ttl).Err()
 	if err != nil {
@@ -40,7 +44,7 @@ func (s *ChatService) NewChat(ctx context.Context, name string) (*Chat, error) {
 }
 
 func (s *ChatService) GetChat(ctx context.Context, id string) (*Chat, error) {
-	key := fmt.Sprintf("chats:%s", id)
+	key := fmt.Sprintf(ChatKey, id)
 	name, err := s.client.Get(ctx, key).Result()
 	if err != nil {
 		return nil, err
