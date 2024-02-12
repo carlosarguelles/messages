@@ -26,46 +26,46 @@ func Chat(chat internal.Chat, username string, messages []internal.Message) temp
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<html lang=\"en\"><head><meta charset=\"UTF-8\"><title>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><title>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(chat.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/chat.templ`, Line: 9, Col: 21}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/chat.templ`, Line: 10, Col: 21}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</title><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"https://unpkg.com/htmx.org/dist/ext/ws.js\"></script><link rel=\"stylesheet\" href=\"/public/css/main.css\"></head><body class=\"h-screen antialiased\"><div class=\"w-full h-full flex flex-col justify-between\"><div class=\"space-y-1 text-center\"><h1 class=\"text-xl p-4 font-bold\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</title><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><script src=\"https://unpkg.com/htmx.org@1.9.10\"></script><script src=\"https://unpkg.com/htmx.org/dist/ext/ws.js\"></script><link rel=\"stylesheet\" href=\"/public/css/main.css\"></head><body class=\"antialiased\" onload=\"scrollChat()\"><div class=\"h-[calc(100dvh)] flex flex-col overflow-hidden\"><div class=\"text-center p-4 space-y-4 border-b-gray-300 border-b\"><h1 class=\"text-xl font-bold\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(chat.Name)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/chat.templ`, Line: 17, Col: 50}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/chat.templ`, Line: 19, Col: 46}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h1><span class=\"text-xs\">All messages sent here will be deleted at ")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</h1><span class=\"text-xs text-gray-500\">All messages sent here will be deleted on ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(chat.ExpiresAt())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/chat.templ`, Line: 20, Col: 24}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `templates/chat.templ`, Line: 22, Col: 24}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span></div><div hx-ext=\"ws\" ws-connect=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span></div><div id=\"messages-container\" hx-ext=\"ws\" class=\"flex-1 px-4 overflow-scroll\" ws-connect=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -73,7 +73,7 @@ func Chat(chat internal.Chat, username string, messages []internal.Message) temp
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><div id=\"messages\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><div id=\"messages\" class=\"flex flex-col gap-2 justify-end py-4\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -98,7 +98,7 @@ func Chat(chat internal.Chat, username string, messages []internal.Message) temp
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></body></html>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><script>\n        function scrollChat() {\n          let element = document.getElementById(\"messages-container\")\n          element.scrollTo(0, element.scrollHeight)\n        }\n        document.addEventListener(\"htmx:wsAfterMessage\", scrollChat)\n      </script></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
