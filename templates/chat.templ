@@ -4,10 +4,12 @@ import "github.com/carlosarguelles/messages/internal"
 import "fmt"
 
 templ Chat(chat internal.Chat, username string, messages []internal.Message) {
+	<!DOCTYPE html>
 	<html lang="en">
 		<head>
 			<meta charset="UTF-8"/>
 			<title>{ chat.Name }</title>
+			<meta name="viewport" content="width=device-width, initial-scale=1"/>
 			<script src="https://unpkg.com/htmx.org@1.9.10"></script>
 			<script src="https://unpkg.com/htmx.org/dist/ext/ws.js"></script>
 			<link rel="stylesheet" href="/public/css/main.css"/>
