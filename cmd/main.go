@@ -23,6 +23,8 @@ func main() {
 
 	pool := internal.NewPool()
 
+	defer pool.Close()
+
 	go pool.Run()
 
 	chatService := internal.NewChatService(client)

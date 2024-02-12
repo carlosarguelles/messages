@@ -38,3 +38,9 @@ func (p *Pool) Run() {
 		}
 	}
 }
+
+func (p *Pool) Close() {
+	close(p.Register)
+	close(p.Broadcast)
+	close(p.unregister)
+}
