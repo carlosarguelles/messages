@@ -19,13 +19,17 @@ type Chat struct {
 
 func (c *Chat) ExpiresAt() string {
 	expiration := time.Now().Add(c.TTL)
-	return fmt.Sprintf("%s %d, %d:%d", expiration.Month().String(), expiration.Day(), expiration.Hour(), expiration.Minute())
+	return fmt.Sprintf("%s %d, %d:%02d", expiration.Month().String(), expiration.Day(), expiration.Hour(), expiration.Minute())
 }
 
 type ChatMessage struct {
 	Username string     `json:"username"`
 	Content  string     `json:"content"`
 	SentAt   *time.Time `json:"sentAt"`
+}
+
+func (cm *ChatMessage) GetTime() string {
+	return fmt.Sprintf("%s %d, %d:%02d", cm.SentAt.Month().String(), cm.SentAt.Day(), cm.SentAt.Hour(), cm.SentAt.Minute())
 }
 
 type ChatService struct {
@@ -73,7 +77,8 @@ func (s *ChatService) NewMessage(ctx context.Context, chatID, username, content 
 	id := uuid.NewString()
 	key := fmt.Sprintf(MessageKey, chatID, id)
 	now := time.Now()
-	value, err := json.Marshal(ChatMessage{username, content, &now})
+	message := ChatMessage{username, content, &now}
+	value, err := json.Marshal(message)
 	if err != nil {
 		return nil, err
 	}
@@ -83,7 +88,7 @@ func (s *ChatService) NewMessage(ctx context.Context, chatID, username, content 
 	}
 	return &Message{
 		ChatID:  chatID,
-		Content: MessageBubble(username, content, true),
+		Content: MessageBubble(message, true),
 	}, nil
 }
 
@@ -122,7 +127,7 @@ func (s *ChatService) GetChatMessages(ctx context.Context, chatID string) ([]Mes
 	for i, cm := range chatMessages {
 		messages[i] = Message{
 			ChatID:  chatID,
-			Content: MessageBubble(cm.Username, cm.Content, false),
+			Content: MessageBubble(cm, false),
 		}
 	}
 	return messages, nil

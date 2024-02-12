@@ -1,17 +1,21 @@
 package internal
 
-templ MessageBubble(username string, content string, incoming bool) {
+templ MessageUI(message ChatMessage) {
+	<div class="flex gap-2 items-start">
+		<div class="flex-1 flex gap-2 items-start">
+			<span class="font-bold">{ message.Username }</span>
+			<div class="max-w-[600px]">{ message.Content }</div>
+		</div>
+		<div class="text-xs text-gray-500">{ message.GetTime() }</div>
+	</div>
+}
+
+templ MessageBubble(message ChatMessage, incoming bool) {
 	if incoming {
 		<div id="messages" hx-swap-oob="beforeend">
-			<div class="flex gap-2">
-				<span class="font-bold">{ username }</span>
-				<div>{ content }</div>
-			</div>
+			@MessageUI(message)
 		</div>
 	} else {
-		<div class="flex gap-2">
-			<span class="font-bold">{ username }</span>
-			<div>{ content }</div>
-		</div>
+		@MessageUI(message)
 	}
 }
